@@ -1,0 +1,89 @@
+pragma solidity ^0.8.3;
+
+ 
+
+contract CovidRecord {
+
+ 
+
+  bytes32 record;
+
+  string enterRecord;
+
+  string enterDate;
+
+ 
+
+  function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
+
+      uint8 i = 0;
+
+      while(i < 32 && _bytes32[i] != 0) {
+
+          i++;
+
+      }
+
+      bytes memory bytesArray = new bytes(i);
+
+      for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
+
+          bytesArray[i] = _bytes32[i];
+
+      }
+
+      return string(bytesArray);
+
+  }
+
+ 
+
+ 
+
+  function storeRecord(bytes32 _record) public {
+
+       require (_record.length > 0); 
+
+       record = _record;
+
+  }
+
+ 
+
+  function submitRecord (string memory _enterRecord, string memory _enterDate) public returns (bool) {
+
+     require ((bytes(_enterRecord).length > 0) && (bytes(_enterDate).length > 0));
+
+     storeRecord(keccak256(abi.encode(_enterRecord, _enterDate)));
+
+     return true;
+
+  }
+
+ 
+
+  function validateRecord (string memory _enterRecord, string memory _enterDate) view public returns (bool) {
+
+     require ((bytes(_enterRecord).length > 0) && (bytes(_enterDate).length > 0));
+
+     return (stringsEqual(abi.encode((_enterRecord), (_enterDate))));
+
+  }
+
+ 
+
+  function stringsEqual(bytes memory _a) internal view returns(bool) {
+
+    if (keccak256(_a) != record) {
+
+        return false;
+
+    }
+
+    return true;
+
+  }
+
+}
+
+ 
